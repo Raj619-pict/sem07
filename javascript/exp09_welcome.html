@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home Page</title>
+</head>
+<body>
+  <center>
+    <h2 id="welcomeMsg"></h2>
+    <button onclick="logout()">Logout</button>
+  </center>
+
+  <script>
+    const name = localStorage.getItem('studentName') || 'Student';
+    document.getElementById('welcomeMsg').innerText =
+      `Congratulations ${name}! You have successfully registered.`;
+
+    function logout() {
+      localStorage.removeItem('studentName');
+      window.location.href = 'exp09.html';
+    }
+  </script>
+</body>
+</html>

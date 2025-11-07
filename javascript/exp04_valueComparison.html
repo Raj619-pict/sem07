@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Type-Aware Comparison</title>
+</head>
+<body>
+
+  <center>
+    <h2>Multi-Type Comparison Result</h2>
+
+    <div>
+      <label for="str1">Enter First Value:</label>
+      <input type="text" id="str1" name="str1">
+    </div>
+
+    <div>
+      <label for="str2">Enter Second Value:</label>
+      <input type="text" id="str2" name="str2">
+    </div>
+
+    <button onclick="compareValues()">Compare</button>
+
+    <div id="comparisonResult"></div>
+  </center>
+
+  <script>
+    function parseValue(value) {
+      // Handle booleans
+      if (value.toLowerCase() === "true") return true;
+      if (value.toLowerCase() === "false") return false;
+
+      // Handle null/undefined
+      if (value.toLowerCase() === "null") return null;
+      if (value.toLowerCase() === "undefined") return undefined;
+
+      // Handle numbers (integer or float)
+      if (!isNaN(value) && value.trim() !== "") return Number(value);
+
+      // Otherwise, keep as string
+      return value;
+    }
+
+    function compareValues() {
+      const input1 = document.getElementById('str1').value.trim();
+      const input2 = document.getElementById('str2').value.trim();
+      const resultDiv = document.getElementById('comparisonResult');
+
+      if (input1 === "" || input2 === "") {
+        resultDiv.innerHTML = "Please enter both values.";
+        return;
+      }
+
+      const value1 = parseValue(input1);
+      const value2 = parseValue(input2);
+
+      let comparisonResults = `<div><strong>Type of First:</strong> ${typeof value1}</div>
+                               <div><strong>Type of Second:</strong> ${typeof value2}</div>`;
+
+      // 1. Strict Equality (===)
+      const strictEqual = value1 === value2;
+      comparisonResults += `<div>
+        <strong>1. Strict Equality (===):</strong> ${strictEqual ? "Equal" : "Not Equal"}
+      </div>`;
+
+      // 2. Loose Equality (==)
+      const looseEqual = value1 == value2;
+      comparisonResults += `<div>
+        <strong>2. Loose Equality (==):</strong> ${looseEqual ? "Equal" : "Not Equal"}
+      </div>`;
+
+      // 3. Case-Insensitive (Only if both are strings)
+      let caseInsensitiveEqual = "Not Applicable";
+      if (typeof value1 === "string" && typeof value2 === "string") {
+        caseInsensitiveEqual = value1.toLowerCase() === value2.toLowerCase() ? "Equal" : "Not Equal";
+      }
+      comparisonResults += `<div>
+        <strong>3. Case-Insensitive:</strong> ${caseInsensitiveEqual}
+      </div>`;
+
+      // 4. Locale Compare (if strings)
+      if (typeof value1 === "string" && typeof value2 === "string") {
+        const localeResult = value1.localeCompare(value2);
+        let localeMessage = "";
+        if (localeResult === 0) {
+          localeMessage = "Strings are identical";
+        } else if (localeResult < 0) {
+          localeMessage = "First string comes before second alphabetically";
+        } else {
+          localeMessage = "First string comes after second alphabetically";
+        }
+        comparisonResults += `<div>
+          <strong>4. Locale Compare:</strong> ${localeMessage}
+        </div>`;
+      } else {
+        comparisonResults += `<div>
+          <strong>4. Locale Compare:</strong> Not Applicable (non-string values)
+        </div>`;
+      }
+
+      // 5. Length Comparison (if strings)
+      if (typeof value1 === "string" && typeof value2 === "string") {
+        const lengthEqual = value1.length === value2.length;
+        comparisonResults += `<div>
+          <strong>5. Length Comparison:</strong>
+          ${lengthEqual ? `Both have ${value1.length} characters` :
+          `Different lengths (${value1.length} vs ${value2.length})`}
+        </div>`;
+      } else {
+        comparisonResults += `<div>
+          <strong>5. Length Comparison:</strong> Not Applicable (non-string values)
+        </div>`;
+      }
+
+      resultDiv.innerHTML = comparisonResults;
+    }
+  </script>
+
+</body>
+</html>
